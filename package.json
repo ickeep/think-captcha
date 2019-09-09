@@ -116,5 +116,9 @@
     "tslint-config-standard": "^8.0.1",
     "typedoc": "^0.12.0",
     "typescript": "^3.0.3"
+  },
+  "peerDependencies": {
+    "svg-captcha": "^1.4.0",
+    "think": "^0.0.2"
   }
 }
