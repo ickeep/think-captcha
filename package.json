@@ -1,6 +1,6 @@
 {
   "name": "think-captcha",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "think-captcha",
   "keywords": [],
   "main": "dist/think-captcha.umd.js",
@@ -118,7 +118,9 @@
     "typescript": "^3.0.3"
   },
   "peerDependencies": {
-    "svg-captcha": "^1.4.0",
     "think": "^0.0.2"
+  },
+  "dependencies": {
+    "svg-captcha": "^1.4.0"
   }
 }
