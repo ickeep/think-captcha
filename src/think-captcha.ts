@@ -1,5 +1,6 @@
 // @ts-ignore
 import { think } from 'thinkjs'
+// @ts-ignore
 import svgCaptcha from 'svg-captcha'
 
 export interface IConf {
@@ -19,7 +20,7 @@ export interface IConf {
 export default class Captcha extends think.Service {
   conf: IConf
 
-  constructor(conf: IConf) {
+  constructor(conf?: IConf) {
     super()
     const dfOpts = {
       cachePrefix: 'captcha-full',
