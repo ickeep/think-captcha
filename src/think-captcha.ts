@@ -46,7 +46,7 @@ export default class Captcha extends think.Service {
       const minNum = maxNum / 10
       code = Math.random() * maxNum
       code = code < maxNum / 10 ? code + minNum : code
-      return code
+      return Math.floor(code)
     }
     const pool = this.conf.codePool
     const len = pool.length
