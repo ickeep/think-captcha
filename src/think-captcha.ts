@@ -175,14 +175,13 @@ export default class Captcha extends think.Service {
       think.cache(cacheKey, null)
       return { code: 410001, msg: '超过时间限制，请重新获取' }
     }
-    if (codeObj.code + '' === code + '') {
-      codeObj.num -= 1
-      // 次数超过限制
-      if (codeObj.num < 1) {
-        think.cache(cacheKey, null)
-        return { code: 410001, msg: '出错次数太多，请重新获取' }
-      }
-      think.cache(cacheKey, codeObj)
+    codeObj.num -= 1
+    // 次数超过限制
+    if (codeObj.num < 1) {
+      think.cache(cacheKey, null)
+      return { code: 410001, msg: '出错次数太多，请重新获取' }
+    }
+    if (codeObj.code + '' !== code + '') {
       return { code: 401001, msg: '验证失败，请确认输入' }
     }
     think.cache(cacheKey, null)
