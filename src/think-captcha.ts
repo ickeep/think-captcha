@@ -167,7 +167,7 @@ export default class Captcha extends think.Service {
       return {
         code: 410001,
         msg: '请输入图形验证码',
-        data: this.sendImg.call(this, action, imgType)
+        data: await this.sendImg.call(this, action, imgType)
       }
     }
     const ipData = await this.verifyIpBlack('img', ip)
@@ -177,7 +177,7 @@ export default class Captcha extends think.Service {
     const cacheKey = `${this.conf.cachePrefix}-${action}-${uuid}`
     const codeObj = await think.cache(cacheKey)
     if (think.isEmpty(codeObj)) {
-      return { code: 410001, msg: '请输入图形验证码', data: this.sendImg.call(this, action) }
+      return { code: 410001, msg: '请输入图形验证码', data: await this.sendImg.call(this, action) }
     }
     const curTime = new Date().getTime()
     // 超时 重新生成
@@ -187,7 +187,7 @@ export default class Captcha extends think.Service {
       return {
         code: 410001,
         msg: '超过时间限制，请重新获取',
-        data: this.sendImg.call(this, action, imgType)
+        data: await this.sendImg.call(this, action, imgType)
       }
     }
     if (!(codeObj.code && codeObj.code.toLocaleUpperCase() === code.toLocaleUpperCase())) {
@@ -198,7 +198,7 @@ export default class Captcha extends think.Service {
         return {
           code: 410001,
           msg: '出错次数太多，请重新获取',
-          data: this.sendImg.call(this, action, imgType)
+          data: await this.sendImg.call(this, action, imgType)
         }
       }
       think.cache(cacheKey, codeObj)
