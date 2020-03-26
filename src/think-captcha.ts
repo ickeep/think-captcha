@@ -136,7 +136,7 @@ export default class Captcha extends think.Service {
     const ipCacheKey = `${this.conf.cachePrefix}-black-${type}-${ip}`
     const ipNum = (await think.cache(ipCacheKey)) || 0
     if (ipNum >= this.conf.ipBlackMaxNum) {
-      return { code: 410002, msg: '你的IP验证次数太多，已被拉入黑名单', data: '' }
+      return { code: 410002, msg: 'IP_verified_too_many_has_been_blacklisted', data: '' }
     }
     // @ts-ignore
     think.cache(ipCacheKey, parseInt(ipNum, 10) + 1, { timeout: this.conf.ipBlackTime * 1000 })
@@ -166,7 +166,7 @@ export default class Captcha extends think.Service {
     if (!action || !code || !uuid) {
       return {
         code: 410001,
-        msg: '请输入图形验证码',
+        msg: 'enter_graphic_code',
         data: await this.sendImg.call(this, action, imgType)
       }
     }
@@ -177,7 +177,11 @@ export default class Captcha extends think.Service {
     const cacheKey = `${this.conf.cachePrefix}-${action}-${uuid}`
     const codeObj = await think.cache(cacheKey)
     if (think.isEmpty(codeObj)) {
-      return { code: 410001, msg: '请输入图形验证码', data: await this.sendImg.call(this, action) }
+      return {
+        code: 410001,
+        msg: 'enter_graphic_code',
+        data: await this.sendImg.call(this, action)
+      }
     }
     const curTime = new Date().getTime()
     // 超时 重新生成
@@ -186,7 +190,7 @@ export default class Captcha extends think.Service {
       think.cache(cacheKey, null)
       return {
         code: 410001,
-        msg: '超过时间限制，请重新获取',
+        msg: 'time_limit_exceeded_please_reacquire',
         data: await this.sendImg.call(this, action, imgType)
       }
     }
@@ -197,16 +201,16 @@ export default class Captcha extends think.Service {
         think.cache(cacheKey, null)
         return {
           code: 410001,
-          msg: '出错次数太多，请重新获取',
+          msg: 'too_many_errors_please_try_again',
           data: await this.sendImg.call(this, action, imgType)
         }
       }
       think.cache(cacheKey, codeObj)
-      return { code: 401001, msg: '验证失败，请确认输入' }
+      return { code: 401001, msg: 'verification_failed_please_confirm' }
     }
     think.cache(cacheKey, null)
     this.reIpBlackNum('img', ip)
-    return { code: 0, msg: '验证成功' }
+    return { code: 0, msg: 'verification_succeeded' }
   }
 
   async sendCode({ action, sign }: { action: string; sign: string }) {
@@ -218,7 +222,7 @@ export default class Captcha extends think.Service {
       if (timeLeft > 0) {
         return {
           code: 403004,
-          msg: `${this.conf.interval} 秒内只能获取一次`,
+          msg: 'get_too_frequent_please_try_again_later',
           data: { timeLeft: timeLeft / 1000 }
         }
       }
@@ -252,25 +256,25 @@ export default class Captcha extends think.Service {
     const codeObj = await think.cache(cacheKey)
 
     if (think.isEmpty(codeObj)) {
-      return { code: 410001, msg: '验证码错误，请重新获取' }
+      return { code: 410001, msg: 'wrong_verification_code_please_try_again' }
     }
     const curTime = new Date().getTime()
     const timeLeft = codeObj.time - curTime + this.conf.codeTimeout * 1000
     if (timeLeft < 0) {
       think.cache(cacheKey, null)
-      return { code: 410001, msg: '超过时间限制，请重新获取' }
+      return { code: 410001, msg: 'time_limit_exceeded_please_reacquire' }
     }
     codeObj.num -= 1
     // 次数超过限制
     if (codeObj.num < 1) {
       think.cache(cacheKey, null)
-      return { code: 410001, msg: '出错次数太多，请重新获取' }
+      return { code: 410001, msg: 'too_many_errors_please_try_again' }
     }
     if (codeObj.code + '' !== code + '') {
-      return { code: 401001, msg: '验证失败，请确认输入' }
+      return { code: 401001, msg: 'verification_failed_please_confirm' }
     }
     think.cache(cacheKey, null)
     this.reIpBlackNum('ip', ip)
-    return { code: 0, msg: '验证成功' }
+    return { code: 0, msg: 'verification_succeeded' }
   }
 }
